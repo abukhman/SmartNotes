@@ -2,3 +2,20 @@ body {
   text-align: center;
   background: linear-gradient(to right, #ddddee, #effffe, #eedddd);
 }
+
+#navbar {
+  padding: 16px 0;
+  margin: 0;
+  list-style-type: none;
+  text-align: center;
+}
+#navbar li {
+  display: inline-block;
+  margin-left: 15px;
+  text-transform: uppercase;
+}
+
+a {
+  color: #aaa;
+  text-decoration: none;
+}

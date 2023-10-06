@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/icon.png') }}">
   <meta charset="utf-8">
-  <title>{% block title %}Base title{% endblock %}</title>
+  <title>{% block title %}SpeechConvert{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
   <main>
     {% block content %}
+      <ul id="navbar">
+        {% for item in menu %}
+          <li><a href="{{ item.url }}">{{ item.name }}</a></li>
+        {% endfor %}
+      </ul>
     {% endblock %}
   </main>
 </body>
