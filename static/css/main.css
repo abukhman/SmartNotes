@@ -4,7 +4,7 @@ body {
 }
 
 #navbar {
-  padding: 16px 0;
+  padding: 12px;
   margin: 0;
   list-style-type: none;
   text-align: center;
@@ -18,4 +18,18 @@ body {
 a {
   color: #aaa;
   text-decoration: none;
+}
+
+.left_div {
+  float: left;
+  padding: 40px;
+}
+
+.right_div {
+  float: right;
+  padding: 40px;
+}
+
+textarea {
+  resize: none;
 }
