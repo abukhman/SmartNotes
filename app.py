@@ -1,7 +1,10 @@
 import os
+import tempfile
 
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
+
+from converter.salute_converter import SaluteConverter
 
 
 app = Flask(__name__)
@@ -33,11 +36,22 @@ def history():
 @app.route("/convert", methods=['GET', 'POST'])
 def convert():
     if request.method == 'POST':
+        auth = request.form['auth_data']
         file = request.files['file']
-        filename = secure_filename(file.filename)
-        if filename != '':
-            file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-            return render_template('convert.html', menu=menu, filename=filename)
+        tmp = tempfile.TemporaryFile()
+
+        # tmp_path = os.path.join(tempfile.gettempdir(), tmp.name)
+        # print(tmp_path)
+
+        file.save(tmp)
+        # начинаем с начала, потому что после save указатель в конце
+        tmp.seek(0)
+
+        conv = SaluteConverter()
+        conv.login(auth)
+        result = conv.sync_recognition(file.mimetype, tmp)
+
+        return render_template('convert.html', menu=menu, filename="tts.ogg")
     return render_template('convert.html', menu=menu)
 
 if __name__ == "__main__":

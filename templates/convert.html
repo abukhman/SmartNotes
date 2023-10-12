@@ -3,45 +3,46 @@
 {% block title %}Convert{% endblock %}
 
 {% block content %}
-  {{ super() }}
-  <h1>Here you can convert your audio.</h1>
-  {% if filename %}
-    <audio controls src="{{ url_for('upload', filename=filename) }}"></audio>
-    <div>
-      <div class="left_div">
-        <textarea rows="20" cols="70" id="converted_text"></textarea>
-      </div>
-      <div class="right_div">
-        <textarea rows="20" cols="70" id="notes"></textarea>
-        <button onclick="saveTextAsFile()">Save</button>
-      </div>
-    </div>
-    <script>
-      function saveTextAsFile() {
-        var textToSave = document.getElementById("notes").value;
-        var textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
-        var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-        var fileNameToSaveAs = "notes"
+{{ super() }}
+<h1>Here you can convert your audio.</h1>
+{% if filename %}
+<audio controls src="{{ url_for('upload', filename=filename) }}"></audio>
+<div>
+  <div class="left_div">
+    <textarea rows="20" cols="70" id="converted_text"></textarea>
+  </div>
+  <div class="right_div">
+    <textarea rows="20" cols="70" id="notes"></textarea>
+    <button onclick="saveTextAsFile()">Save</button>
+  </div>
+</div>
+<script>
+  function saveTextAsFile() {
+    var textToSave = document.getElementById("notes").value;
+    var textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });
+    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+    var fileNameToSaveAs = "notes"
 
-        var downloadLink = document.createElement("a");
-        downloadLink.download = fileNameToSaveAs;
-        downloadLink.innerHTML = "Download File";
-        downloadLink.href = textToSaveAsURL;
-        downloadLink.onclick = destroyClickedElement;
-        downloadLink.style.display = "none";
-        document.body.appendChild(downloadLink);
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    downloadLink.href = textToSaveAsURL;
+    downloadLink.onclick = destroyClickedElement;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
 
-        downloadLink.click();
-      }
+    downloadLink.click();
+  }
 
-      function destroyClickedElement(event) {
-        document.body.removeChild(event.target);
-      }
-    </script>
-  {% else %}
-    <form method="POST" action="" enctype="multipart/form-data">
-      <input type="file" name="file" accept="audio/x-mpeg">
-      <input type="submit" value="Submit">
-    </form>
-  {% endif %}
+  function destroyClickedElement(event) {
+    document.body.removeChild(event.target);
+  }
+</script>
+{% else %}
+<form method="POST" action="" enctype="multipart/form-data">
+  <input type="text" name="auth_data" placeholder="Client Secret">
+  <input type="file" name="file" accept="audio/x-mpeg">
+  <input type="submit" value="Submit">
+</form>
+{% endif %}
 {% endblock %}
