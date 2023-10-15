@@ -50,8 +50,13 @@ def convert():
         conv = SaluteConverter()
         conv.login(auth)
         result = conv.sync_recognition(file.mimetype, tmp)
+        if result != None and len(result) > 0:
+            text = result[0]
+            for i in range(1, len(result)):
+                text += result[i]
+            return render_template('convert.html', menu=menu, filename="tts.ogg", text=text)
 
-        return render_template('convert.html', menu=menu, filename="tts.ogg")
+        return render_template('convert.html', menu=menu, filename="tts.ogg", text="")
     return render_template('convert.html', menu=menu)
 
 if __name__ == "__main__":
