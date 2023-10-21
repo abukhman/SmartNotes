@@ -4,55 +4,14 @@
 
 {% block content %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/convert.js') }}"></script>
+
 <h1>Here you can convert your audio.</h1>
-<audio controls preload="auto" id="audio"></audio>
-{% if filename %}
-<div>
-  <div class="left_div">
-    <textarea rows="20" cols="70" id="converted_text">{{ text }}</textarea>
-  </div>
-  <div class="right_div">
-    <textarea rows="20" cols="70" id="notes"></textarea>
-    <button onclick="saveTextAsFile()">Save</button>
-  </div>
-</div>
-<script>
-  var src = JSON.parse(localStorage.getItem("audioKey"));
-  document.getElementById('audio').src = src;
 
-  function saveTextAsFile() {
-    var textToSave = document.getElementById("notes").value;
-    var textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });
-    var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-    var fileNameToSaveAs = "notes"
-
-    var downloadLink = document.createElement("a");
-    downloadLink.download = fileNameToSaveAs;
-    downloadLink.innerHTML = "Download File";
-    downloadLink.href = textToSaveAsURL;
-    downloadLink.onclick = destroyClickedElement;
-    downloadLink.style.display = "none";
-    document.body.appendChild(downloadLink);
-
-    downloadLink.click();
-  }
-
-  function destroyClickedElement(event) {
-    document.body.removeChild(event.target);
-  }
-</script>
-{% else %}
-<form method="POST" action="" enctype="multipart/form-data">
-  <input type="text" name="auth_data" placeholder="Client Secret" />
-  <input type="file" name="file" id="audio_file" accept="audio/x-mpeg" />
+<form id="upload" method="POST" action="" enctype="multipart/form-data">
+  <input type="text" id="auth" name="auth_data" placeholder="Client Secret" />
+  <input type="file" id="file" name="file" accept="audio/x-mpeg" />
   <input type="submit" value="Submit" />
 </form>
-<script>
-  document.getElementById('audio_file').onchange = function () {
-    var src = URL.createObjectURL(this.files[0])
-    document.getElementById('audio').src = src;
-    localStorage.setItem("audioKey", JSON.stringify(src));
-  }
-</script>
-{% endif %}
+
 {% endblock %}

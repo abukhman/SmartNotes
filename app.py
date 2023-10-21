@@ -1,10 +1,10 @@
 import os
 import tempfile
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template, request, redirect, session, url_for
 
-from converter.salute_converter import SaluteConverter
+from convertor.salute_convertor import SaluteConvertor
+
 
 
 app = Flask(__name__)
@@ -19,11 +19,6 @@ menu = [{"name": "Home", "url": "/"},
         {"name": "History", "url": "history"},
         {"name": "Convert", "url": "convert"}]
 
-
-@app.route('/uploads/<filename>')
-def upload(filename):
-    return send_from_directory(app.config['UPLOAD_PATH'], filename)
-
 @app.route("/")
 def home():
     return render_template('home.html', menu=menu)
@@ -33,10 +28,16 @@ def history():
     files = os.listdir(app.config['UPLOAD_PATH'])
     return render_template('history.html', menu=menu, files=files)
 
+@app.route('/notes')
+def notes():
+    args = request.args
+    id = args.get('id')
+    return render_template('notes.html', menu=menu, id=id)
+
 @app.route("/convert", methods=['GET', 'POST'])
 def convert():
     if request.method == 'POST':
-        auth = request.form['auth_data']
+        auth = request.form['auth']
         file = request.files['file']
         tmp = tempfile.TemporaryFile()
 
@@ -47,16 +48,15 @@ def convert():
         # начинаем с начала, потому что после save указатель в конце
         tmp.seek(0)
 
-        conv = SaluteConverter()
+        conv = SaluteConvertor()
         conv.login(auth)
-        result = conv.sync_recognition(file.mimetype, tmp)
-        if result != None and len(result) > 0:
-            text = result[0]
-            for i in range(1, len(result)):
-                text += result[i]
-            return render_template('convert.html', menu=menu, filename="tts.ogg", text=text)
+        # result = conv.sync_recognition(file.mimetype, tmp)
+        # if result != None and len(result) > 0:
+        #     text = result[0]
+        #     for i in range(1, len(result)):
+        #         text += result[i]
+        return {'text': 'text', 'redirect_url': '/notes'}
 
-        return render_template('convert.html', menu=menu, filename="tts.ogg", text="")
     return render_template('convert.html', menu=menu)
 
 if __name__ == "__main__":

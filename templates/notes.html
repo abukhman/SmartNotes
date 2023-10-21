@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Note{% endblock %}
+
+{% block content %}
+{{ super() }}
+<script>var note_id = {{ id | tojson }};</script>
+
+<h1 id="name">Note</h1>
+
+<audio id="audio" controls></audio>
+
+<div>
+    <div class="left_div">
+        <textarea id="text" rows="20" cols="70"></textarea>
+    </div>
+    <div class="right_div">
+        <textarea id="notes" rows="20" cols="70"></textarea>
+        <button onclick="saveTextAsFile()">Save</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/notes.js') }}"></script>
+{% endblock %}
