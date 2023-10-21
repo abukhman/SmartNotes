@@ -1,7 +1,7 @@
 import datetime as dt
 import json, uuid, requests, enum
 from werkzeug.datastructures import FileStorage
-from converter.converter import Converter
+from convertor.convertor import Convertor
 
 url_auth = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 url_upload = "https://smartspeech.sber.ru/rest/v1/data:upload"
@@ -18,7 +18,7 @@ class StatusType(enum.StrEnum):
     Done = "DONE"
     Error = "ERROR"
 
-class SaluteConverter(Converter):
+class SaluteConvertor(Convertor):
     def __init__(self):
         self.token = ""
         self.expires = dt.datetime.now()
