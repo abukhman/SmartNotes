@@ -50,12 +50,14 @@ def convert():
 
         conv = SaluteConvertor()
         conv.login(auth)
-        # result = conv.sync_recognition(file.mimetype, tmp)
-        # if result != None and len(result) > 0:
-        #     text = result[0]
-        #     for i in range(1, len(result)):
-        #         text += result[i]
-        return {'text': 'text', 'redirect_url': '/notes'}
+        result = conv.sync_recognition(file.mimetype, tmp)
+        
+        text = ""
+        if result != None and len(result) > 0:
+            text = result[0]
+            for i in range(1, len(result)):
+                text += result[i]
+        return {'text': text, 'redirect_url': '/notes'}
 
     return render_template('convert.html', menu=menu)
 

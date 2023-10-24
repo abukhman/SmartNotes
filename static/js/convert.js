@@ -72,49 +72,50 @@ $(document).ready(function () {
         // save authorization data
         localStorage.setItem(AUTH_KEY, form.elements['auth'].value)
 
-        console.log(form.elements['file'].files[0])
+        var file = form.elements['file'].files[0]
+        var reader = new FileReader();
 
-        let file = form.elements['file'].files[0]
-        let data = new FormData();
-        data.append('file', file);
-        data.append('auth', form.elements['auth'].value)
+        reader.onload = function () {
+            recognize_file(form, reader.result)
+        };
 
-        $.post({
-            url: '/convert',
-            processData: false,
-            contentType: false,
-            data: data,
-
-            success: function (response) {
-                success_recognize(response, file)
-            }
-        })
+        reader.readAsDataURL(file);
     })
 })
 
-function success_recognize(response, file) {
+function recognize_file(form, blob) {
+    let file = form.elements['file'].files[0]
+    let data = new FormData()
+    data.append('file', file)
+    data.append('auth', form.elements['auth'].value)
+
+    $.post({
+        url: '/convert',
+        processData: false,
+        contentType: false,
+        data: data,
+
+        success: function (response) {
+            success_recognize(response, blob)
+        }
+    })
+}
+
+function success_recognize(response, blob) {
     console.log(response)
     if (!response['text'] || !response['redirect_url']) {
         console.error("Incorrect response")
         return
     }
 
-    file.arrayBuffer().then((arrayBuffer) => {
-        console.log("length ", arrayBuffer)
-        const blob = new Blob([new Uint8Array(arrayBuffer)], { type: file.type });
-        console.log(blob);
-
-        db_event.dispatchEvent(new CustomEvent(
-            'add',
-            {
-                detail: {
-                    'text': response['text'],
-                    'audio': blob,
-                    'redirect_url': response['redirect_url']
-                }
+    db_event.dispatchEvent(new CustomEvent(
+        'add',
+        {
+            detail: {
+                'text': response['text'],
+                'audio': blob,
+                'redirect_url': response['redirect_url']
             }
-        ))
-    });
-
-
+        }
+    ))
 }

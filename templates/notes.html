@@ -8,7 +8,13 @@
 
 <h1 id="name">Note</h1>
 
-<audio id="audio" controls></audio>
+<div id="waveform">
+    <div id="time">0:00</div>
+    <div id="duration">0:00</div>
+    <div id="hover"></div>
+</div>
+
+<button id="play">Play / Pause</button>
 
 <div>
     <div class="left_div">
@@ -20,5 +26,5 @@
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/notes.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/notes.js') }}"></script>
 {% endblock %}
