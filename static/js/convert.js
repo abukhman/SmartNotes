@@ -58,15 +58,22 @@ function add_note(db, audio, text, redirect_url) {
 }
 
 $(document).ready(function () {
+    let loading = $('#loading')
+    loading.hide()
+
     let form = document.forms['upload']
     form.elements['auth'].value = auth
 
-    $('#upload').on('submit', function (event) {
+    $('#upload').on('submit', async function (event) {
         // do not send form to server automatically
         event.preventDefault()
+        loading.show()
+        loading.text('Loading started...')
 
         let form = document.forms['upload']
         if (!form.elements['auth'].value) {
+            loading.hide()
+            alert("There is no auth information")
             return
         }
         // save authorization data
@@ -76,18 +83,20 @@ $(document).ready(function () {
         var reader = new FileReader();
 
         reader.onload = function () {
-            recognize_file(form, reader.result)
+            recognize_file(loading, form, reader.result)
         };
 
         reader.readAsDataURL(file);
     })
 })
 
-function recognize_file(form, blob) {
+function recognize_file(loading, form, blob) {
     let file = form.elements['file'].files[0]
     let data = new FormData()
     data.append('file', file)
     data.append('auth', form.elements['auth'].value)
+
+    loading.text('Loading on server...')
 
     $.post({
         url: '/convert',
@@ -96,14 +105,24 @@ function recognize_file(form, blob) {
         data: data,
 
         success: function (response) {
-            success_recognize(response, blob)
+            success_recognize(loading, response, blob)
+        },
+        error: function (response) {
+            loading.hide()
+            alert("Error on server occured. Please, try again later.")
+            console.error(response)
         }
     })
 }
 
-function success_recognize(response, blob) {
+function success_recognize(loading, response, blob) {
+    loading.text('Got answer, saving data...')
+
     console.log(response)
+
     if (!response['text'] || !response['redirect_url']) {
+        loading.hide()
+        alert("Invalid data from server. Please, try again later.")
         console.error("Incorrect response")
         return
     }
