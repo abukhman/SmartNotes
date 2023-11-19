@@ -89,7 +89,7 @@ $(document).ready(function () {
     };
 })
 
-function saveTextAsFile() {
+$('button#save').on('click', function () {
     var textToSave = document.getElementById("notes").value;
     var textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });
     var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
@@ -104,7 +104,7 @@ function saveTextAsFile() {
     document.body.appendChild(downloadLink);
 
     downloadLink.click();
-}
+});
 
 function destroyClickedElement(event) {
     document.body.removeChild(event.target);

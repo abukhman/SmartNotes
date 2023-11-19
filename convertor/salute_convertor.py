@@ -36,8 +36,8 @@ class SaluteConvertor(Convertor):
 
         if not response.ok:
             print(response.json())
-            return 
-        
+            return
+
         data = response.json()
 
         self.token = data.get("access_token", "")
@@ -47,10 +47,10 @@ class SaluteConvertor(Convertor):
         if self.token == "" or dt.datetime.now() > self.expires:
             print("login token was expired")
             return
-        
-        headers={"Authorization": "Bearer %s" %self.token, 
+
+        headers={"Authorization": "Bearer %s" %self.token,
                  "Content-Type": mimetype}
-        
+
         data = stream.read()
         stream.close()
 
@@ -60,16 +60,16 @@ class SaluteConvertor(Convertor):
         except Exception as e:
             print(e)
             return
-        
+
         if not response.ok:
             print(response.json())
             return
-        
+
         data = response.json()
         if data.get("status", 0) != 200:
             print(data)
             return
-        
+
         return data.get("result", [])
 
 
@@ -77,16 +77,16 @@ class SaluteConvertor(Convertor):
         if len(self.token) == 0 or dt.datetime.now() > dt.datetime.fromtimestamp(self.expires):
             # to-do сказать пользователю об этом
             return
-        
+
         headers = {"Authorization": "Bearer "+self.token}
         response = requests.post(url_upload, headers=headers, data=file)
 
         if response.status_code != 200:
             print(response.json())
             return
-        
+
         return response.json()["result"]["request_file_id"]
-        
+
     # create task for uploaded file
     def create_task(self, file_id) -> str | None:
         headers = {"Authorization": "Bearer %s" %self.token}
@@ -102,7 +102,7 @@ class SaluteConvertor(Convertor):
         if response.status_code != 200:
             print(response.json())
             return
-        
+
         return response.json()["result"]["id"]
 
 
@@ -123,7 +123,6 @@ class SaluteConvertor(Convertor):
             print(response.json())
             return
         return response
-        
+
     def convert_data(self, data):
         pass
- 

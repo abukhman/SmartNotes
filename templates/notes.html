@@ -14,15 +14,16 @@
     <div id="hover"></div>
 </div>
 
-<button id="play">Play / Pause</button>
+<button class="button-1" id="play">Play / Pause</button>
 
 <div>
-    <div class="left_div">
-        <textarea id="text" rows="20" cols="70"></textarea>
+    <div class="text_div">
+        <textarea disabled id="text" rows="5" cols="70"></textarea>
     </div>
-    <div class="right_div">
-        <textarea id="notes" rows="20" cols="70"></textarea>
-        <button onclick="saveTextAsFile()">Save</button>
+    <div class="notes_div">
+        <textarea id="notes" rows="10" cols="100" placeholder="Type your notes here"></textarea>
+        <button class="button-1" onmousedown="$('#notes').val($('#notes').val() + $('#text').val()); return false;">Paste converted text</button>
+        <button class="button-1" id = "save">Save</button>
     </div>
 </div>
 

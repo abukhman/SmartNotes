@@ -1,6 +1,6 @@
 body {
   text-align: center;
-  background: linear-gradient(to right, #ddddee, #effffe, #eedddd);
+  background: linear-gradient(to right, #ddddee, #eeeeff, #ddddee);
 }
 
 #navbar {
@@ -21,18 +21,44 @@ a {
   text-decoration: none;
 }
 
-.left_div {
-  float: left;
-  padding: 40px;
+.button-1 {
+  background-color: #ffffff;
+  border: 0;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: 8px;
+  line-height: 4px;
+  padding: 12px;
+  margin-top: 5px;
 }
 
-.right_div {
-  float: right;
-  padding: 40px;
+.button-1:hover {
+  background-color: rgb(249,250,251);
+}
+
+.button-1:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.button-1:focus-visible {
+  box-shadow: none;
+}
+
+.text_div {
+  padding: 20px;
+}
+
+.notes_div {
+  padding: 20px;
 }
 
 textarea {
   resize: none;
+  margin: auto;
+  display: block;
+  padding: 10px;
 }
 
 #waveform {
