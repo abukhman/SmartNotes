@@ -34,15 +34,7 @@ $('button#play').on('click', function () {
     wavesurfer.playPause()
 });
 
-let openRequest = indexedDB.open('smart_notes', 1)
-
-// init and upgrade
-openRequest.onupgradeneeded = function () {
-    let db = openRequest.result
-    if (!db.objectStoreNames.contains('notes')) {
-        db.createObjectStore('notes', { keyPath: 'id' })
-    }
-};
+let openRequest = indexedDB.open('smart_notes', 2)
 
 openRequest.onerror = function () {
     console.error("Error", openRequest.error)

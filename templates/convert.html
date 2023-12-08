@@ -9,6 +9,10 @@
 <h1>Here you can convert your audio.</h1>
 
 <form id="upload" method="POST" action="" enctype="multipart/form-data">
+  <select id="kind" name="kind">
+    <option value="sync">Синхронное</option>
+    <option value="async">Асинхронное</option>
+  </select>
   <input type="text" id="auth" name="auth_data" placeholder="Client Secret" />
   <input type="file" id="file" name="file" accept="audio/x-mpeg" />
   <input type="submit" class="button-1" value="Submit" />

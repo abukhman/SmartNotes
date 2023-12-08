@@ -1,6 +1,5 @@
 import datetime as dt
 import json, uuid, requests, enum
-from werkzeug.datastructures import FileStorage
 from convertor.convertor import Convertor
 from app import app
 
@@ -26,7 +25,7 @@ class SaluteConvertor(Convertor):
         self.token = ""
         self.expires = dt.datetime.now()
 
-    def get_token(self, secret, scope="SALUTE_SPEECH_PERS") -> str:
+    def get_auth_token(self, secret, scope="SALUTE_SPEECH_PERS") -> str:
         request_uuid = uuid.uuid4()
         headers = {"Authorization": "Basic %s" % secret, "RqUID": str(request_uuid)}
 
@@ -53,7 +52,7 @@ class SaluteConvertor(Convertor):
 
         return self.token
 
-    def sync_recognition(self, mimetype, stream):
+    def sync_recognize(self, mimetype, stream):
         if self.token == "" or dt.datetime.now() > self.expires:
             app.logger.info(
                 "token is expired or do not exist: token: %s, expired_at: %s",
@@ -76,7 +75,7 @@ class SaluteConvertor(Convertor):
                 verify=app.config["CERT_PATH"],
             )
         except Exception as e:
-            app.logger.error("unable to sync recognize: %s", e)
+            app.logger.error("unable to sync recogn4ize: %s", e)
             return
 
         if not response.ok:
@@ -98,7 +97,7 @@ class SaluteConvertor(Convertor):
 
         self.create_task()
 
-    def load_file(self, mimetype, stream) -> str:
+    def upload_file(self, mimetype, stream) -> str:
         if self.token == "" or dt.datetime.now() > self.expires:
             app.logger.info(
                 "token is expired or do not exist: token: %s, expired_at: %s",
@@ -137,13 +136,14 @@ class SaluteConvertor(Convertor):
         return result.get("request_file_id", "")
 
     # create task for uploaded file
-    def create_task(self, file_id) -> str:
+    def create_task(self, file_id, mimetype) -> str:
         headers = {"Authorization": "Bearer %s" % self.token}
         params = {
             "request_file_id": file_id,
             "options": {
-                "audio_encoding": "OPUS",
+                "audio_encoding": "MP3",
                 "language": "ru-RU",
+                "channels_count": 1,
             },
         }
 
@@ -152,7 +152,7 @@ class SaluteConvertor(Convertor):
             response = requests.post(
                 url_async,
                 headers=headers,
-                data=json.dumps(params, indent=4),
+                data=json.dumps(params),
                 verify=app.config["CERT_PATH"],
             )
         except Exception as e:
@@ -172,43 +172,71 @@ class SaluteConvertor(Convertor):
         return result.get("id", "")
 
     def check_task(self, task_id):
+        null = {}
+
         headers = {"Authorization": "Bearer %s" % self.token}
 
-        response = requests.get(
-            url_get,
-            headers=headers,
-            data={"id": task_id},
-            verify=app.config["CERT_PATH"],
-        )
-        if response.status_code != 200:
-            print(response.json())
-            return
-        return (
-            response.json()["result"]["status"],
-            response.json()["result"]["request_file_id"],
-        )
+        response: requests.Response
+        try:
+            response = requests.get(
+                url_get,
+                headers=headers,
+                params={"id": task_id},
+                verify=app.config["CERT_PATH"],
+            )
+        except Exception as e:
+            app.logger.error("unable to check task: %s", e)
+            return null
 
-    def download_file(self, response_id):
+        if not response.ok:
+            app.logger.warning("got bad response: %s", response.json())
+            return null
+
+        data = response.json()
+        if data.get("status", 0) != 200:
+            app.logger.warning("got bad response: %s", data)
+            return null
+
+        return data.get("result", {})
+
+    def download_result(self, response_id):
+        null = "", []
+
         headers = {"Authorization": "Bearer %s" % self.token}
 
-        response = requests.get(
-            url_download,
-            headers=headers,
-            data={"response_file_id": response_id},
-            verify=app.config["CERT_PATH"],
-        )
-        if response.status_code != 200:
-            print(response.json())
-            return
-        return response
+        response: requests.Response
+        try:
+            response = requests.get(
+                url_download,
+                headers=headers,
+                params={"response_file_id": response_id},
+                verify=app.config["CERT_PATH"],
+            )
+        except Exception as e:
+            app.logger.error("unable to download result: %s", e)
+            return null
 
-    def check_and_download(self, task_id) -> list | None:
-        result = self.check_task(task_id)
-        if result[0] == "DONE":
-            return self.download_file(result[1])
+        if not response.ok:
+            app.logger.warning("got bad response: %s", response.json())
+            return null
 
-        return None
+        data = response.json()
+        if len(data) == 0:
+            return null
+
+        text = ""
+        words = []
+
+        for i in range(len(data)):
+            results = data[i].get("results", [])
+            if len(results) == 0:
+                continue
+
+            # use the possible one
+            text += results[0].get("normalized_text", "")
+            words += results[0].get("word_alignments", [])
+
+        return text, words
 
     def convert_data(self, data):
-        pass
         pass
