@@ -21,9 +21,12 @@
         <textarea disabled id="text" rows="5" cols="70"></textarea>
     </div>
     <div class="notes_div">
-        <textarea id="notes" rows="10" cols="100" placeholder="Type your notes here"></textarea>
-        <button class="button-1" onmousedown="$('#notes').val($('#notes').val() + $('#text').val()); return false;">Paste converted text</button>
-        <button class="button-1" id = "save">Save</button>
+        <button class="button-1" id="bold">Bold</button>
+        <button class="button-1" id="italic">Italic</button>
+        <button class="button-1" id="underline">Underline</button>
+        <div class="editor" id="notes" contenteditable="true" placeholder="Type your notes here"></div>
+        <button class="button-1" id="paste">Paste converted text</button>
+        <button class="button-1" id="save">Save</button>
     </div>
 </div>
 

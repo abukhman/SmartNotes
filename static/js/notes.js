@@ -81,6 +81,39 @@ $(document).ready(function () {
     };
 })
 
+$('button#bold').on('mousedown', function () {
+    document.execCommand('bold', false, null);
+    $('#bold').toggleClass('bold');
+    return false;
+});
+
+$('button#italic').on('mousedown', function () {
+    document.execCommand('italic', false, null);
+    $('#italic').toggleClass('italic');
+    return false;
+});
+
+$('button#underline').on('mousedown', function () {
+    document.execCommand('underline', false, null);
+    $('#underline').toggleClass('underline');
+    return false;
+});
+
+$('body').on('focusout', '.editor', function() {
+  var element = $(this);
+  if (!element.text().replace(' ', '').length) {
+    element.empty();
+  }
+});
+
+$('button#paste').on('mousedown', function () {
+    document.getElementById('notes').innerHTML += $('#text').val();
+    document.getElementById('notes').focus();
+    document.execCommand('selectAll', false, null);
+    document.getSelection().collapseToEnd();
+    return false;
+});
+
 $('button#save').on('click', function () {
     var textToSave = document.getElementById("notes").value;
     var textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });

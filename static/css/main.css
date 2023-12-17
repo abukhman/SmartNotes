@@ -47,11 +47,47 @@ a {
 }
 
 .text_div {
-  padding: 20px;
+  padding: 5px;
 }
 
 .notes_div {
   padding: 20px;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.editor {
+  margin: 4px auto 6px;
+  outline: none;
+  height: 150px;
+  width: 750px;
+  text-align: left;
+  line-height: 1.4;
+  overflow-y: auto;
+  box-shadow: 1px 1px 2px #ddd;
+  padding: 15px;
+  border-radius: 7px;
+  box-shadow: 1px 1px 2px #ddd;
+  background: #fff;
+}
+
+.editor[placeholder]:empty:before {
+  content: attr(placeholder);
+  color: #555;
+}
+
+.editor[placeholder]:empty:focus:before {
+  content: '';
 }
 
 textarea {

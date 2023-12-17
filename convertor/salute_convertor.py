@@ -75,7 +75,7 @@ class SaluteConvertor(Convertor):
                 verify=app.config["CERT_PATH"],
             )
         except Exception as e:
-            app.logger.error("unable to sync recogn4ize: %s", e)
+            app.logger.error("unable to sync recognize: %s", e)
             return
 
         if not response.ok:
