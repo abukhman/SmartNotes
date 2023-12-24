@@ -28,8 +28,7 @@ def home():
 
 @app.route("/history")
 def history():
-    files = os.listdir(app.config["UPLOAD_PATH"])
-    return render_template("history.html", menu=menu, files=files)
+    return render_template("history.html", menu=menu)
 
 
 @app.route("/notes")

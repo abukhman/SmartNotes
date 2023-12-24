@@ -5,7 +5,35 @@
 {% block content %}
   {{ super() }}
   <h1>Here you can see your previous convertations:</h1>
-  {% for file in files %}
-    <p><a href="{{ url_for('upload', filename=file) }}">{{ file }}</a></p>
-  {% endfor %}
+  <p id="records"></p>
+
+  <script>
+    function win_onload() {
+      let openRequest = indexedDB.open("smart_notes", 2);
+
+      openRequest.onerror = function () {
+        console.error("Error", openRequest.error);
+      }
+
+      openRequest.onsuccess = function() {
+        let db = openRequest.result;
+
+        let transaction = db.transaction('notes', 'readonly');
+        let notes = transaction.objectStore('notes');
+
+        var records = notes.getAll();
+        records.onsuccess = function() {
+            for (let i = 0; i < records.result.length; i++) {
+              console.log(records.result[i]);
+
+              name = records.result[i].name;
+              id = records.result[i].id;
+
+              document.getElementById("records").innerHTML += "<a href='/notes?id=" + id + "'>" + name + "</a>" + "</br>";
+            }
+        };
+      };
+    }
+    window.onload = win_onload;
+  </script>
 {% endblock %}
