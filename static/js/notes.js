@@ -115,7 +115,7 @@ $('button#paste').on('mousedown', function () {
 });
 
 $('button#save').on('click', function () {
-    var textToSave = document.getElementById("notes").value;
+    var textToSave = document.getElementById("notes").innerHTML;
     var textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });
     var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
     var fileNameToSaveAs = "notes"
